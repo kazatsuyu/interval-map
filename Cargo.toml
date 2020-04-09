@@ -5,8 +5,10 @@ authors = ["kazatsuyu <shirayama.kazatsuyu@gmail.com>"]
 edition = "2018"
 license = "MIT"
 license-file = "LICENSE"
-
-description = "my package description"
+description = "A vector-based, non-duplicate range-keyed, sorted array."
 readme = "README.md"
+homepage = "https://github.com/kazatsuyu/interval-map"
+documentation = "https://github.com/kazatsuyu/interval-map"
+repository = "https://github.com/kazatsuyu/interval-map"
 
 [dependencies]
