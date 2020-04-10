@@ -1,13 +1,13 @@
 [package]
 name = "interval-map"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["kazatsuyu <shirayama.kazatsuyu@gmail.com>"]
 edition = "2018"
 license-file = "LICENSE"
 description = "A vector-based, non-duplicate range-keyed, sorted array."
 readme = "README.md"
 homepage = "https://github.com/kazatsuyu/interval-map"
-documentation = "https://github.com/kazatsuyu/interval-map"
+documentation = "https://kazatsuyu.github.io/interval-map/interval_map/"
 repository = "https://github.com/kazatsuyu/interval-map"
 
 [dependencies]
