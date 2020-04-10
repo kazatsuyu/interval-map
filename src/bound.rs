@@ -14,6 +14,7 @@ pub(super) trait BorrowPartialOrd2<T: ?Sized> {
     fn borrow_partial_cmp_2(&self, other: &T) -> Option<Ordering>;
 }
 
+#[doc(hidden)]
 macro __impl($self:ident, $other:ident, $x:ident, $y:ident) {
     impl<T> From<$other<T>> for $self<T> {
         fn from(o: $other<T>) -> Self {
