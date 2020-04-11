@@ -15,9 +15,11 @@ pub struct Interval<T> {
 }
 
 impl<T> Interval<T> {
-
     pub fn new(start: Bound<T>, end: Bound<T>) -> Self {
-        Self{ start: StartBound(start), end: EndBound(end) }
+        Self {
+            start: StartBound(start),
+            end: EndBound(end),
+        }
     }
 
     pub fn is_empty(&self) -> bool
