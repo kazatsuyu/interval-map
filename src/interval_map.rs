@@ -362,6 +362,18 @@ impl<K, V> IntervalMap<K, V> {
             )),
         }
     }
+
+    pub fn inner(&self) -> &[(Interval<K>, V)] {
+        &self.sorted_vec
+    }
+
+    pub fn into_inner(self) -> Vec<(Interval<K>, V)> {
+        self.sorted_vec
+    }
+
+    pub unsafe fn from_inner_unchecked(inner: Vec<(Interval<K>, V)>) -> Self {
+        Self { sorted_vec: inner }
+    }
 }
 
 impl<K, V> IntervalMap<K, V>
