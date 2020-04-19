@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["bound",""],["interval_map",""]]});
+initSidebarItems({"mod":[["bound",""],["interval",""],["interval_map",""]]});

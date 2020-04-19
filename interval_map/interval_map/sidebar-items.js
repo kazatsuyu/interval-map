@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["Entry",""]],"struct":[["Drain",""],["Interval",""],["IntervalMap",""],["IntoIter",""],["Iter",""],["IterMut",""],["Keys",""],["OccupiedEntry",""],["VacantEntry",""],["Values",""],["ValuesMut",""]]});
+initSidebarItems({"enum":[["Entry",""]],"struct":[["Drain",""],["IntervalMap",""],["IntoIter",""],["Iter",""],["IterMut",""],["Keys",""],["OccupiedEntry",""],["VacantEntry",""],["Values",""],["ValuesMut",""]]});
