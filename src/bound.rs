@@ -163,9 +163,9 @@ macro __impl($self:ident, $other:ident, $x:ident, $y:ident) {
     impl<T: ToTokens> ToTokens for $self<T> {
         fn to_tokens(&self, tokens: &mut TokenStream) {
             *tokens = match self.0 {
-                Bound::Included(ref v) => quote!($self(std::collections::Bound::Included(#v))),
-                Bound::Excluded(ref v) => quote!($self(std::collections::Bound::Excluded(#v))),
-                Bound::Unbounded => quote!($self(std::collections::Bound::Unbounded)),
+                Bound::Included(ref v) => quote!(interval_map::bound::$self(std::collections::Bound::Included(#v))),
+                Bound::Excluded(ref v) => quote!(interval_map::bound::$self(std::collections::Bound::Excluded(#v))),
+                Bound::Unbounded => quote!(interval_map::bound::$self(std::collections::Bound::Unbounded)),
             };
         }
     }

@@ -180,6 +180,6 @@ impl<T: ToTokens> ToTokens for Interval<T> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let s = &self.start;
         let e = &self.end;
-        *tokens = quote!(Interval::new(#s, #e));
+        *tokens = quote!(interval_map::Interval::new(#s, #e));
     }
 }
