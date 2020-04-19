@@ -168,3 +168,18 @@ impl<T> From<RangeFull> for Interval<T> {
         }
     }
 }
+
+#[cfg(feature = "proc-macro")]
+use {
+    proc_macro2::TokenStream,
+    quote::{quote, ToTokens},
+};
+
+#[cfg(feature = "proc-macro")]
+impl<T: ToTokens> ToTokens for Interval<T> {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        let s = &self.start;
+        let e = &self.end;
+        *tokens = quote!(Interval::new(#s, #e));
+    }
+}

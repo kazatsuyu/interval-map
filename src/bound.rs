@@ -1,5 +1,11 @@
 use std::{borrow::Borrow, cmp::Ordering, collections::Bound};
 
+#[cfg(feature = "proc-macro")]
+use {
+    proc_macro2::TokenStream,
+    quote::{quote, ToTokens},
+};
+
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub struct StartBound<T>(pub Bound<T>);
 
@@ -150,6 +156,17 @@ macro __impl($self:ident, $other:ident, $x:ident, $y:ident) {
                 },
                 (&Unbounded, _) | (_, &Unbounded) => Some(Ordering::$x),
             }
+        }
+    }
+
+    #[cfg(feature = "proc-macro")]
+    impl<T: ToTokens> ToTokens for $self<T> {
+        fn to_tokens(&self, tokens: &mut TokenStream) {
+            *tokens = match self.0 {
+                Bound::Included(ref v) => quote!($self(std::collections::Bound::Included(#v))),
+                Bound::Excluded(ref v) => quote!($self(std::collections::Bound::Excluded(#v))),
+                Bound::Unbounded => quote!($self(std::collections::Bound::Unbounded)),
+            };
         }
     }
 }

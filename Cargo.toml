@@ -10,4 +10,12 @@ homepage = "https://github.com/kazatsuyu/interval-map"
 documentation = "https://kazatsuyu.github.io/interval-map/interval_map/"
 repository = "https://github.com/kazatsuyu/interval-map"
 
+[features]
+default = []
+
+proc-macro = ["proc-macro2", "quote"]
+
 [dependencies]
+
+proc-macro2 = { version = "1.0", optional = true }
+quote = { version = "1.0", optional = true }
