@@ -178,8 +178,12 @@ use {
 #[cfg(feature = "proc-macro")]
 impl<T: ToTokens> ToTokens for Interval<T> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        let args = [self.start.to_token_stream(), self.end.to_token_stream()];
-        *tokens = quote!(interval_map::Interval::new(#(#args),*));
+        let s = self.start.to_token_stream();
+        let e = self.end.to_token_stream();
+        *tokens = quote!(interval_map::Interval {
+            start: #s,
+            end: #e,
+        });
     }
 }
 
@@ -191,10 +195,10 @@ mod tests {
         let i: Interval<_> = (0..1).into();
         assert_eq!(
             i.to_token_stream().to_string(),
-            quote!(interval_map::Interval::new(
-                interval_map::bound::StartBound(std::collections::Bound::Included(0i32)),
-                interval_map::bound::EndBound(std::collections::Bound::Excluded(1i32))
-            ))
+            quote!(interval_map::Interval {
+                start: interval_map::bound::StartBound(std::collections::Bound::Included(0i32)),
+                end: interval_map::bound::EndBound(std::collections::Bound::Excluded(1i32)),
+            })
             .to_string()
         );
     }
