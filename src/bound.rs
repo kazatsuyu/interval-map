@@ -1,10 +1,10 @@
 use std::{borrow::Borrow, cmp::Ordering, collections::Bound};
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
-pub struct StartBound<T>(pub(super) Bound<T>);
+pub struct StartBound<T>(pub Bound<T>);
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
-pub struct EndBound<T>(pub(super) Bound<T>);
+pub struct EndBound<T>(pub Bound<T>);
 
 pub(super) trait BorrowPartialOrd<T: ?Sized> {
     fn borrow_partial_cmp(&self, other: &T) -> Option<Ordering>;

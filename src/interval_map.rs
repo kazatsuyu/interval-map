@@ -10,12 +10,12 @@ use super::bound::{BorrowPartialOrd, BorrowPartialOrd2, EndBound, StartBound};
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub struct Interval<T> {
-    start: StartBound<T>,
-    end: EndBound<T>,
+    pub start: StartBound<T>,
+    pub end: EndBound<T>,
 }
 
 impl<T> Interval<T> {
-    pub fn new(start: Bound<T>, end: Bound<T>) -> Self {
+    pub const fn new(start: Bound<T>, end: Bound<T>) -> Self {
         Self {
             start: StartBound(start),
             end: EndBound(end),
