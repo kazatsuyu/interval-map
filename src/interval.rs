@@ -178,12 +178,13 @@ use {
 #[cfg(feature = "proc-macro")]
 impl<T: ToTokens> ToTokens for Interval<T> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        let s = self.start.to_token_stream();
-        let e = self.end.to_token_stream();
-        *tokens = quote!(interval_map::Interval {
+        let s = &self.start;
+        let e = &self.end;
+        tokens.extend(quote!(
+            interval_map::Interval {
             start: #s,
             end: #e,
-        });
+        }));
     }
 }
 
