@@ -25,7 +25,7 @@ impl<T> Interval<T> {
     where
         T: PartialOrd,
     {
-        !(self.start < self.end)
+        !(self.start <= self.end)
     }
 
     pub(super) fn remove(self, other: &Self) -> [Option<Interval<T>>; 2]
