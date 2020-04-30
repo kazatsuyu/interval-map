@@ -209,6 +209,13 @@ impl<K, V> IntervalMap<K, V> {
     }
 }
 
+#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Debug, Hash)]
+pub enum MergedValue<T, U> {
+    Left(T),
+    Right(U),
+    Both(T, U),
+}
+
 impl<K, V> IntervalMap<K, V>
 where
     K: Ord + Clone,
@@ -307,10 +314,7 @@ where
         iter: &mut Drain<K, V>,
         x: Option<(Interval<K>, V)>,
         mut y: Option<(Interval<K>, V)>,
-    ) -> Option<(Interval<K>, V)>
-    where
-        K: std::fmt::Debug,
-    {
+    ) -> Option<(Interval<K>, V)> {
         if let Some((i, v)) = x {
             loop {
                 if let Some((i2, v2)) = y {
@@ -351,10 +355,7 @@ where
             y
         }
     }
-    pub fn append(&mut self, other: &mut Self)
-    where
-        K: std::fmt::Debug,
-    {
+    pub fn append(&mut self, other: &mut Self) {
         if self.is_empty() {
             std::mem::swap(self, other);
             return;
@@ -367,6 +368,133 @@ where
         }
         self.sorted_vec.extend(iter);
     }
+
+    pub fn merge<V2: Clone>(
+        &self,
+        other: &IntervalMap<K, V2>,
+    ) -> IntervalMap<K, MergedValue<V, V2>> {
+        if other.is_empty() {
+            let inner = self
+                .iter()
+                .map(|(i, v)| (i.clone(), MergedValue::Left(v.clone())))
+                .collect();
+            unsafe { IntervalMap::from_inner_unchecked(inner) }
+        } else if self.is_empty() {
+            let inner = other
+                .iter()
+                .map(|(i, v)| (i.clone(), MergedValue::Right(v.clone())))
+                .collect();
+            unsafe { IntervalMap::from_inner_unchecked(inner) }
+        } else {
+            let mut inner = Vec::with_capacity((self.len() + other.len()) * 2 - 1);
+            let mut it1 = self.iter().map(|(i, v)| (i.clone(), v.clone()));
+            let mut it2 = other.iter().map(|(i, v)| (i.clone(), v.clone()));
+            let mut x1 = it1.next();
+            let mut x2 = it2.next();
+            loop {
+                let x = (x1, x2);
+                if let (Some((i1, v1)), Some((i2, v2))) = x {
+                    if i1.end < i2.start {
+                        inner.push((i1, MergedValue::Left(v1)));
+                        x2 = Some((i2, v2));
+                        x1 = it1.next();
+                    } else if i2.end < i1.start {
+                        inner.push((i2, MergedValue::Right(v2)));
+                        x1 = Some((i1, v1));
+                        x2 = it2.next();
+                    } else if i1.start < i2.start {
+                        inner.push((
+                            Interval {
+                                start: i1.start,
+                                end: i2.start.clone().into(),
+                            },
+                            MergedValue::Left(v1.clone()),
+                        ));
+                        x1 = Some((
+                            Interval {
+                                start: i2.start.clone(),
+                                end: i1.end,
+                            },
+                            v1,
+                        ));
+                        x2 = Some((i2, v2));
+                    } else if i2.start < i1.start {
+                        inner.push((
+                            Interval {
+                                start: i2.start,
+                                end: i1.start.clone().into(),
+                            },
+                            MergedValue::Right(v2.clone()),
+                        ));
+                        x2 = Some((
+                            Interval {
+                                start: i1.start.clone(),
+                                end: i2.end,
+                            },
+                            v2,
+                        ));
+                        x1 = Some((i1, v1));
+                    } else if i1.end < i2.end {
+                        inner.push((
+                            Interval {
+                                start: i1.start,
+                                end: i1.end.clone(),
+                            },
+                            MergedValue::Both(v1, v2.clone()),
+                        ));
+                        x2 = Some((
+                            Interval {
+                                start: i1.end.into(),
+                                end: i2.end,
+                            },
+                            v2,
+                        ));
+                        x1 = it1.next();
+                    } else if i2.end < i1.end {
+                        inner.push((
+                            Interval {
+                                start: i2.start,
+                                end: i2.end.clone(),
+                            },
+                            MergedValue::Both(v1.clone(), v2),
+                        ));
+                        x1 = Some((
+                            Interval {
+                                start: i2.end.into(),
+                                end: i1.end,
+                            },
+                            v1,
+                        ));
+                        x2 = it2.next();
+                    } else {
+                        inner.push((
+                            Interval {
+                                start: i1.start,
+                                end: i1.end,
+                            },
+                            MergedValue::Both(v1, v2),
+                        ));
+                        x1 = it1.next();
+                        x2 = it2.next();
+                    }
+                } else {
+                    x1 = x.0;
+                    x2 = x.1;
+                    break;
+                }
+            }
+            if let Some((i, v)) = x1 {
+                inner.push((i, MergedValue::Left(v)))
+            }
+            if let Some((i, v)) = x2 {
+                inner.push((i, MergedValue::Right(v)))
+            }
+            inner.extend(it1.map(|(i, v)| (i, MergedValue::Left(v))));
+            inner.extend(it2.map(|(i, v)| (i, MergedValue::Right(v))));
+            unsafe { IntervalMap::from_inner_unchecked(inner) }
+        }
+    }
+
     pub fn split_off<Q>(&mut self, key: K) -> Self {
         match self
             .sorted_vec
@@ -757,6 +885,46 @@ mod test {
                 (130..140, 700),
                 (135..145, -400),
                 (145..155, -500),
+            ])
+        )
+    }
+    #[test]
+    fn merge() {
+        let mut map1 = IntervalMap::default();
+        map1.insert(10..20, 100);
+        map1.insert(30..40, 200);
+        map1.insert(50..60, 300);
+        map1.insert(70..80, 400);
+        map1.insert(90..100, 500);
+        map1.insert(110..120, 600);
+        map1.insert(130..140, 700);
+        let mut map2 = IntervalMap::default();
+        map2.insert(45..55, -100);
+        map2.insert(65..105, -200);
+        map2.insert(115..125, -300);
+        map2.insert(135..145, -400);
+        map2.insert(145..155, -500);
+        use MergedValue::*;
+        assert_eq!(
+            map1.merge(&map2),
+            FromIterator::from_iter(vec![
+                (10..20, Left(100)),
+                (30..40, Left(200)),
+                (45..50, Right(-100)),
+                (50..55, Both(300, -100)),
+                (55..60, Left(300)),
+                (65..70, Right(-200)),
+                (70..80, Both(400, -200)),
+                (80..90, Right(-200)),
+                (90..100, Both(500, -200)),
+                (100..105, Right(-200)),
+                (110..115, Left(600)),
+                (115..120, Both(600, -300)),
+                (120..125, Right(-300)),
+                (130..135, Left(700)),
+                (135..140, Both(700, -400)),
+                (140..145, Right(-400)),
+                (145..155, Right(-500)),
             ])
         )
     }
