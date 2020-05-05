@@ -186,24 +186,6 @@
 <span id="186">186</span>
 <span id="187">187</span>
 <span id="188">188</span>
-<span id="189">189</span>
-<span id="190">190</span>
-<span id="191">191</span>
-<span id="192">192</span>
-<span id="193">193</span>
-<span id="194">194</span>
-<span id="195">195</span>
-<span id="196">196</span>
-<span id="197">197</span>
-<span id="198">198</span>
-<span id="199">199</span>
-<span id="200">200</span>
-<span id="201">201</span>
-<span id="202">202</span>
-<span id="203">203</span>
-<span id="204">204</span>
-<span id="205">205</span>
-<span id="206">206</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::{
     <span class="ident">borrow</span>::<span class="ident">Borrow</span>,
@@ -323,56 +305,38 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Range</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Interval</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">r</span>: <span class="ident">Range</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="self">Self</span> {
-            <span class="ident">start</span>: <span class="ident">StartBound</span>(<span class="ident">Bound</span>::<span class="ident">Included</span>(<span class="ident">r</span>.<span class="ident">start</span>)),
-            <span class="ident">end</span>: <span class="ident">EndBound</span>(<span class="ident">Bound</span>::<span class="ident">Excluded</span>(<span class="ident">r</span>.<span class="ident">end</span>)),
-        }
+        <span class="self">Self</span>::<span class="ident">new</span>(<span class="ident">Bound</span>::<span class="ident">Included</span>(<span class="ident">r</span>.<span class="ident">start</span>), <span class="ident">Bound</span>::<span class="ident">Excluded</span>(<span class="ident">r</span>.<span class="ident">end</span>))
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">RangeInclusive</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Interval</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">r</span>: <span class="ident">RangeInclusive</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> (<span class="ident">start</span>, <span class="ident">end</span>) <span class="op">=</span> <span class="ident">r</span>.<span class="ident">into_inner</span>();
-        <span class="self">Self</span> {
-            <span class="ident">start</span>: <span class="ident">StartBound</span>(<span class="ident">Bound</span>::<span class="ident">Included</span>(<span class="ident">start</span>)),
-            <span class="ident">end</span>: <span class="ident">EndBound</span>(<span class="ident">Bound</span>::<span class="ident">Included</span>(<span class="ident">end</span>)),
-        }
+        <span class="self">Self</span>::<span class="ident">new</span>(<span class="ident">Bound</span>::<span class="ident">Included</span>(<span class="ident">start</span>), <span class="ident">Bound</span>::<span class="ident">Included</span>(<span class="ident">end</span>))
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">RangeFrom</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Interval</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">r</span>: <span class="ident">RangeFrom</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="self">Self</span> {
-            <span class="ident">start</span>: <span class="ident">StartBound</span>(<span class="ident">Bound</span>::<span class="ident">Included</span>(<span class="ident">r</span>.<span class="ident">start</span>)),
-            <span class="ident">end</span>: <span class="ident">EndBound</span>(<span class="ident">Bound</span>::<span class="ident">Unbounded</span>),
-        }
+        <span class="self">Self</span>::<span class="ident">new</span>(<span class="ident">Bound</span>::<span class="ident">Included</span>(<span class="ident">r</span>.<span class="ident">start</span>), <span class="ident">Bound</span>::<span class="ident">Unbounded</span>)
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">RangeTo</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Interval</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">r</span>: <span class="ident">RangeTo</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="self">Self</span> {
-            <span class="ident">start</span>: <span class="ident">StartBound</span>(<span class="ident">Bound</span>::<span class="ident">Unbounded</span>),
-            <span class="ident">end</span>: <span class="ident">EndBound</span>(<span class="ident">Bound</span>::<span class="ident">Excluded</span>(<span class="ident">r</span>.<span class="ident">end</span>)),
-        }
+        <span class="self">Self</span>::<span class="ident">new</span>(<span class="ident">Bound</span>::<span class="ident">Unbounded</span>, <span class="ident">Bound</span>::<span class="ident">Excluded</span>(<span class="ident">r</span>.<span class="ident">end</span>))
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">RangeToInclusive</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Interval</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">r</span>: <span class="ident">RangeToInclusive</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="self">Self</span> {
-            <span class="ident">start</span>: <span class="ident">StartBound</span>(<span class="ident">Bound</span>::<span class="ident">Unbounded</span>),
-            <span class="ident">end</span>: <span class="ident">EndBound</span>(<span class="ident">Bound</span>::<span class="ident">Included</span>(<span class="ident">r</span>.<span class="ident">end</span>)),
-        }
+        <span class="self">Self</span>::<span class="ident">new</span>(<span class="ident">Bound</span>::<span class="ident">Unbounded</span>, <span class="ident">Bound</span>::<span class="ident">Included</span>(<span class="ident">r</span>.<span class="ident">end</span>))
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">RangeFull</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Interval</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="kw">_</span>: <span class="ident">RangeFull</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="self">Self</span> {
-            <span class="ident">start</span>: <span class="ident">StartBound</span>(<span class="ident">Bound</span>::<span class="ident">Unbounded</span>),
-            <span class="ident">end</span>: <span class="ident">EndBound</span>(<span class="ident">Bound</span>::<span class="ident">Unbounded</span>),
-        }
+        <span class="self">Self</span>::<span class="ident">new</span>(<span class="ident">Bound</span>::<span class="ident">Unbounded</span>, <span class="ident">Bound</span>::<span class="ident">Unbounded</span>)
     }
 }
 
