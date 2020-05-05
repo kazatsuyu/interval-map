@@ -116,56 +116,38 @@ where
 
 impl<T> From<Range<T>> for Interval<T> {
     fn from(r: Range<T>) -> Self {
-        Self {
-            start: StartBound(Bound::Included(r.start)),
-            end: EndBound(Bound::Excluded(r.end)),
-        }
+        Self::new(Bound::Included(r.start), Bound::Excluded(r.end))
     }
 }
 
 impl<T> From<RangeInclusive<T>> for Interval<T> {
     fn from(r: RangeInclusive<T>) -> Self {
         let (start, end) = r.into_inner();
-        Self {
-            start: StartBound(Bound::Included(start)),
-            end: EndBound(Bound::Included(end)),
-        }
+        Self::new(Bound::Included(start), Bound::Included(end))
     }
 }
 
 impl<T> From<RangeFrom<T>> for Interval<T> {
     fn from(r: RangeFrom<T>) -> Self {
-        Self {
-            start: StartBound(Bound::Included(r.start)),
-            end: EndBound(Bound::Unbounded),
-        }
+        Self::new(Bound::Included(r.start), Bound::Unbounded)
     }
 }
 
 impl<T> From<RangeTo<T>> for Interval<T> {
     fn from(r: RangeTo<T>) -> Self {
-        Self {
-            start: StartBound(Bound::Unbounded),
-            end: EndBound(Bound::Excluded(r.end)),
-        }
+        Self::new(Bound::Unbounded, Bound::Excluded(r.end))
     }
 }
 
 impl<T> From<RangeToInclusive<T>> for Interval<T> {
     fn from(r: RangeToInclusive<T>) -> Self {
-        Self {
-            start: StartBound(Bound::Unbounded),
-            end: EndBound(Bound::Included(r.end)),
-        }
+        Self::new(Bound::Unbounded, Bound::Included(r.end))
     }
 }
 
 impl<T> From<RangeFull> for Interval<T> {
     fn from(_: RangeFull) -> Self {
-        Self {
-            start: StartBound(Bound::Unbounded),
-            end: EndBound(Bound::Unbounded),
-        }
+        Self::new(Bound::Unbounded, Bound::Unbounded)
     }
 }
 

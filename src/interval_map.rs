@@ -526,6 +526,60 @@ where
             },
         }
     }
+
+    pub fn invert(&mut self, val: V) {
+        use std::mem::replace;
+        use Bound::*;
+        if self.is_empty() {
+            self.sorted_vec.push(((..).into(), val));
+            return;
+        }
+        let inner = &mut self.sorted_vec;
+        let mut prev = Unbounded;
+        let mut n = 0;
+        for i in 0..inner.len() {
+            if inner[i].0.start.0 == prev {
+                prev = replace(&mut inner[i].0.end, EndBound(Unbounded)).0;
+            } else if i == n {
+                let interval = &mut inner[n].0;
+                prev = StartBound::from(replace(
+                    &mut interval.end,
+                    replace(
+                        &mut interval.start,
+                        StartBound(replace(&mut prev, Unbounded)),
+                    )
+                    .into(),
+                ))
+                .0;
+                inner[n].1 = val.clone();
+                n += 1;
+            } else {
+                {
+                    let (x, y) = inner.split_at_mut(i);
+                    let x = &mut x[n].0;
+                    let y = &mut y[0].0;
+                    prev = StartBound::from(replace(
+                        &mut y.end,
+                        replace(
+                            &mut x.end,
+                            replace(
+                                &mut y.start,
+                                replace(&mut x.start, StartBound(replace(&mut prev, Unbounded))),
+                            )
+                            .into(),
+                        ),
+                    ))
+                    .0;
+                }
+                inner[n].1 = val.clone();
+                n += 1;
+            }
+        }
+        inner.truncate(n);
+        if prev != Unbounded {
+            inner.push((Interval::new(prev, Unbounded), val));
+        }
+    }
 }
 
 impl<K, V> Default for IntervalMap<K, V>
@@ -927,5 +981,29 @@ mod test {
                 (145..155, Right(-500)),
             ])
         )
+    }
+
+    #[test]
+    fn invert() {
+        use Bound::*;
+        let mut map1 = IntervalMap::default();
+        map1.insert(10..20, 100);
+        map1.insert(30..40, 200);
+        map1.insert(50..60, 300);
+        map1.insert(70..80, 400);
+        map1.insert(90..100, 500);
+        map1.insert(110..120, 600);
+        map1.insert(130..140, 700);
+        map1.invert(42);
+        let mut map2 = IntervalMap::default();
+        map2.insert(..10, 42);
+        map2.insert(Interval::new(Included(20), Excluded(30)), 42);
+        map2.insert(Interval::new(Included(40), Excluded(50)), 42);
+        map2.insert(Interval::new(Included(60), Excluded(70)), 42);
+        map2.insert(Interval::new(Included(80), Excluded(90)), 42);
+        map2.insert(Interval::new(Included(100), Excluded(110)), 42);
+        map2.insert(Interval::new(Included(120), Excluded(130)), 42);
+        map2.insert(Interval::new(Included(140), Unbounded), 42);
+        assert_eq!(map1, map2)
     }
 }
