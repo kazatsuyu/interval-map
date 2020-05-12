@@ -105,10 +105,10 @@ macro __impl($self:ident, $other:ident, $x:ident, $y:ident) {
             match self.0 {
                 Included(ref v) => v.borrow().partial_cmp(other),
                 Excluded(ref v) => match v.borrow().partial_cmp(other) {
-                    Some(Ordering::Equal) => Some(Ordering::Less),
+                    Some(Ordering::Equal) => Some(Ordering::$y),
                     x => x,
                 },
-                _ => Some(Ordering::Greater),
+                _ => Some(Ordering::$x),
             }
         }
     }

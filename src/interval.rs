@@ -170,9 +170,19 @@ impl<T: ToTokens> ToTokens for Interval<T> {
     }
 }
 
-#[cfg(all(test, feature = "proc-macro"))]
+#[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn partial_cmp() {
+        assert_eq!(
+            Interval::new(Bound::Excluded(0), Bound::Excluded(1)).partial_cmp(&0),
+            Some(Ordering::Greater)
+        );
+    }
+
+    #[cfg(feature = "proc-macro")]
     #[test]
     fn to_tokens() {
         let i: Interval<_> = (0..1).into();
