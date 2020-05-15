@@ -342,8 +342,7 @@ where
                             break Some((right, v2));
                         }
                         [None, None] => {
-                            self.sorted_vec.push((i, v));
-                            break iter.next();
+                            y = iter.next();
                         }
                     }
                 } else {
@@ -1005,5 +1004,18 @@ mod test {
         map2.insert(Interval::new(Included(120), Excluded(130)), 42);
         map2.insert(Interval::new(Included(140), Unbounded), 42);
         assert_eq!(map1, map2)
+    }
+
+    #[test]
+    fn append1() {
+        let mut map1 = IntervalMap::default();
+        map1.insert(.., 0);
+        let mut map2 = IntervalMap::default();
+        map2.insert(..5, 1);
+        map2.insert(5..=5, 2);
+        map1.append(&mut map2);
+        let mut map3 = IntervalMap::default();
+        map3.insert(.., 0);
+        assert_eq!(map1, map3)
     }
 }
