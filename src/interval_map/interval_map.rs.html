@@ -1007,6 +1007,18 @@
 <span id="1007">1007</span>
 <span id="1008">1008</span>
 <span id="1009">1009</span>
+<span id="1010">1010</span>
+<span id="1011">1011</span>
+<span id="1012">1012</span>
+<span id="1013">1013</span>
+<span id="1014">1014</span>
+<span id="1015">1015</span>
+<span id="1016">1016</span>
+<span id="1017">1017</span>
+<span id="1018">1018</span>
+<span id="1019">1019</span>
+<span id="1020">1020</span>
+<span id="1021">1021</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">borrow</span>::<span class="ident">Borrow</span>, <span class="ident">collections</span>::<span class="ident">Bound</span>, <span class="ident">iter</span>::<span class="ident">FromIterator</span>};
 
@@ -1352,8 +1364,7 @@
                             <span class="kw">break</span> <span class="prelude-val">Some</span>((<span class="ident">right</span>, <span class="ident">v2</span>));
                         }
                         [<span class="prelude-val">None</span>, <span class="prelude-val">None</span>] <span class="op">=</span><span class="op">&gt;</span> {
-                            <span class="self">self</span>.<span class="ident">sorted_vec</span>.<span class="ident">push</span>((<span class="ident">i</span>, <span class="ident">v</span>));
-                            <span class="kw">break</span> <span class="ident">iter</span>.<span class="ident">next</span>();
+                            <span class="ident">y</span> <span class="op">=</span> <span class="ident">iter</span>.<span class="ident">next</span>();
                         }
                     }
                 } <span class="kw">else</span> {
@@ -2015,6 +2026,19 @@
         <span class="ident">map2</span>.<span class="ident">insert</span>(<span class="ident">Interval</span>::<span class="ident">new</span>(<span class="ident">Included</span>(<span class="number">120</span>), <span class="ident">Excluded</span>(<span class="number">130</span>)), <span class="number">42</span>);
         <span class="ident">map2</span>.<span class="ident">insert</span>(<span class="ident">Interval</span>::<span class="ident">new</span>(<span class="ident">Included</span>(<span class="number">140</span>), <span class="ident">Unbounded</span>), <span class="number">42</span>);
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map1</span>, <span class="ident">map2</span>)
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">append1</span>() {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">map1</span> <span class="op">=</span> <span class="ident">IntervalMap</span>::<span class="ident">default</span>();
+        <span class="ident">map1</span>.<span class="ident">insert</span>(.., <span class="number">0</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">map2</span> <span class="op">=</span> <span class="ident">IntervalMap</span>::<span class="ident">default</span>();
+        <span class="ident">map2</span>.<span class="ident">insert</span>(..<span class="number">5</span>, <span class="number">1</span>);
+        <span class="ident">map2</span>.<span class="ident">insert</span>(<span class="number">5</span>..<span class="op">=</span><span class="number">5</span>, <span class="number">2</span>);
+        <span class="ident">map1</span>.<span class="ident">append</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">map2</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">map3</span> <span class="op">=</span> <span class="ident">IntervalMap</span>::<span class="ident">default</span>();
+        <span class="ident">map3</span>.<span class="ident">insert</span>(.., <span class="number">0</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map1</span>, <span class="ident">map3</span>)
     }
 }
 </pre></div>
